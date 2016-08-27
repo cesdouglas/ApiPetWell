@@ -107,7 +107,6 @@ public class AlimentadorResource {
 	@DELETE
 	@Path("/{devCode}")
 	@RolesAllowed(value="USER")
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response apagar(@PathParam("devCode") int devCode){
 		try {
@@ -123,7 +122,6 @@ public class AlimentadorResource {
 	@POST
 	@Path("/alimentar/{devCode}")
 	@RolesAllowed(value="USER")
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response alimentar(@PathParam("devCode") int devCode){
 		try {
