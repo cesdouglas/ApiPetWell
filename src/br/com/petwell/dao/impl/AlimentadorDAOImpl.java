@@ -14,7 +14,7 @@ public class AlimentadorDAOImpl extends GenericDAOImpl<Alimentador, Integer> imp
 
 	@Override
 	public Alimentador buscarPelaHash(int devCode, String hashAcesso) throws EntityNotFoundException{
-		return em.createQuery("FROM Alimentador a WHERE a.devCode = :d AND a.Usuario.hashAcesso = :h", 
+		return em.createQuery("FROM Alimentador a WHERE a.devCode = :d AND a.usuario.hashAcesso = :h", 
 				Alimentador.class)
 				.setParameter("d", devCode)
 				.setParameter("h", hashAcesso)

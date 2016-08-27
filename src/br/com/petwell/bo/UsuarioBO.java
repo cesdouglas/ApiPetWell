@@ -22,11 +22,11 @@ public abstract class UsuarioBO {
 					.getInstance().createEntityManager();
 			UsuarioDAO dao = new UsuarioDAOImpl(em);
 			dao.buscarPelaHash(hashAcesso);
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		return true;
 	}
 	
 	public static String criarHash(String email, String senha){
@@ -36,6 +36,8 @@ public abstract class UsuarioBO {
 
 	public static void cadastrar(UsuarioTO to, UsuarioDAO dao) throws DBException{
 		Usuario u = new Usuario();
+		u.setNome(to.getNome());
+		u.setEmail(to.getEmail());
 		u.setAlimentadores(to.getAlimentadores());
 		u.setSenha(Util.cryptWithMD5(to.getSenha()));
 		dao.inserir(u);

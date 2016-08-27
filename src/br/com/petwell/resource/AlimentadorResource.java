@@ -39,6 +39,7 @@ public class AlimentadorResource {
 	
 	private AlimentadorDAO dao = new AlimentadorDAOImpl(EntityManagerFactorySingleton
 			.getInstance().createEntityManager()); 
+	
 	private UsuarioDAO usuarioDao = new UsuarioDAOImpl(EntityManagerFactorySingleton
 			.getInstance().createEntityManager()); 
 	
@@ -139,18 +140,17 @@ public class AlimentadorResource {
 			OutputStreamWriter wr = new OutputStreamWriter(client.getOutputStream());
 			wr.write(new Gson().toJson(new DocCloudantTO(a.getDevCode())));
 			wr.close();
-			int statusCodeHTTP = client.getResponseCode();
 			
-			if (statusCodeHTTP == HttpURLConnection.HTTP_OK) {
+			if (client.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
 				return Response.status(Response.Status.OK).entity(ResponseTO.statusTrue()).build();
 			}
-			return Response.status(Response.Status.OK).entity(ResponseTO.statusTrue()).build();
+			return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(ResponseTO.statusFalse()).build();
 		} catch (EntityNotFoundException e) {
 			e.printStackTrace();
 			return Response.status(Response.Status.NOT_FOUND).entity(ResponseTO.statusFalse()).build();
 		}catch (Exception e) {
 			e.printStackTrace();
-			return Response.status(Response.Status.BAD_REQUEST).entity(ResponseTO.statusFalse()).build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ResponseTO.statusFalse()).build();
 		}
 		
 	}
