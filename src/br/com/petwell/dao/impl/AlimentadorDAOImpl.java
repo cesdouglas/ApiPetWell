@@ -1,5 +1,7 @@
 package br.com.petwell.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 import br.com.petwell.dao.AlimentadorDAO;
@@ -20,5 +22,10 @@ public class AlimentadorDAOImpl extends GenericDAOImpl<Alimentador, Integer> imp
 				.setParameter("h", hashAcesso)
 				.getSingleResult();
 	}
-	
+
+	@Override
+	public List<Alimentador> listar(String hashAcesso) throws EntityNotFoundException {
+		return em.createQuery("FROM Alimentador a WHERE a.usuario.hashAcesso = :h", Alimentador.class).setParameter("h", hashAcesso).getResultList();
+	}
+
 }

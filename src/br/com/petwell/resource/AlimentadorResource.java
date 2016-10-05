@@ -3,6 +3,7 @@ package br.com.petwell.resource;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -36,21 +37,21 @@ import br.com.petwell.to.ResponseTO;
 
 @Path("/alimentador")
 public class AlimentadorResource {
-	
+
 	private AlimentadorDAO dao = new AlimentadorDAOImpl(EntityManagerFactorySingleton
 			.getInstance().createEntityManager()); 
-	
+
 	private UsuarioDAO usuarioDao = new UsuarioDAOImpl(EntityManagerFactorySingleton
 			.getInstance().createEntityManager()); 
-	
+
 	private final String HOST_CLOUDANT = "https://1031a471-fa0d-4678-9253-d455832bfa7e-bluemix.cloudant.com";
-	
+
 	private final String LOGIN_CLOUDANT = "1031a471-fa0d-4678-9253-d455832bfa7e-bluemix";
-	
+
 	private final String PASS_CLOUDANT = "5940197a80aa72a2f293970de3e32c561db72f2b47005096a178c2554d0cbe5e";
-	
+
 	private final String DB_CLOUDANT = "petwell";
-	
+
 	@POST
 	@RolesAllowed(value="USER")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -65,7 +66,7 @@ public class AlimentadorResource {
 			return Response.status(Response.Status.BAD_REQUEST).entity(ResponseTO.statusFalse()).build();
 		}
 	}
-	
+
 	@GET
 	@Path("/{devCode}")
 	@RolesAllowed(value="USER")
@@ -74,8 +75,8 @@ public class AlimentadorResource {
 		try {
 			Alimentador a = dao.buscarPelaHash(devCode, AuthenticationFilter.hashAcesso);
 			Gson gson = new GsonBuilder()
-				    .excludeFieldsWithoutExposeAnnotation()
-				    .create();
+					.excludeFieldsWithoutExposeAnnotation()
+					.create();
 			return Response.status(Response.Status.OK).entity(gson.toJson(a)).build();
 		} catch (EntityNotFoundException e) {
 			e.printStackTrace();
@@ -84,10 +85,10 @@ public class AlimentadorResource {
 			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ResponseTO.statusFalse()).build();
 		}
-		
-		
+
+
 	}
-	
+
 	@PUT
 	@Path("/{devCode}")
 	@RolesAllowed(value="USER")
@@ -103,7 +104,7 @@ public class AlimentadorResource {
 			return Response.status(Response.Status.BAD_REQUEST).entity(ResponseTO.statusFalse()).build();
 		}
 	}
-	
+
 	@DELETE
 	@Path("/{devCode}")
 	@RolesAllowed(value="USER")
@@ -118,7 +119,7 @@ public class AlimentadorResource {
 			return Response.status(Response.Status.BAD_REQUEST).entity(ResponseTO.statusFalse()).build();
 		}
 	}
-	
+
 	@POST
 	@Path("/alimentar/{devCode}")
 	@RolesAllowed(value="USER")
@@ -138,7 +139,7 @@ public class AlimentadorResource {
 			OutputStreamWriter wr = new OutputStreamWriter(client.getOutputStream());
 			wr.write(new Gson().toJson(new DocCloudantTO(a.getDevCode())));
 			wr.close();
-			
+
 			if (client.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
 				return Response.status(Response.Status.OK).entity(ResponseTO.statusTrue()).build();
 			}
@@ -150,6 +151,23 @@ public class AlimentadorResource {
 			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ResponseTO.statusFalse()).build();
 		}
-		
+
 	}
+
+	@GET
+	@RolesAllowed(value="USER")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response listar(){
+		try{
+			List<Alimentador> alimentadores = dao.listar(AuthenticationFilter.hashAcesso);
+			Gson gson = new GsonBuilder()
+					.excludeFieldsWithoutExposeAnnotation()
+					.create();
+			return Response.status(Response.Status.OK).entity(gson.toJson(alimentadores)).build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.BAD_REQUEST).entity(ResponseTO.statusFalse()).build();
+		}
+	}
+
 }
